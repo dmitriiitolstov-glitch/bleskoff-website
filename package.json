@@ -13,7 +13,7 @@
     "astro": "astro",
     "studio": "sanity dev",
     "studio:deploy": "sanity deploy",
-    "cms:import": "sanity dataset import sanity/seed.ndjson production --replace"
+    "cms:import": "sanity dataset import sanity/seed.ndjson --dataset production --replace"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",
