@@ -1,0 +1,279 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PromotionCard from "../components/PromotionCard.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import { defaultFaqs, defaultHomepage, defaultPrograms, defaultPromotions, defaultServices, defaultSettings } from "../content/defaults";
+import { getCmsContent } from "../lib/cms";
+
+const cms = await getCmsContent();
+const settings = { ...defaultSettings, ...(cms?.settings ?? {}) };
+const homepage = { ...defaultHomepage, ...(cms?.homepage ?? {}) };
+const services = cms?.services?.length ? cms.services : defaultServices;
+const promotions = cms?.promotions?.length ? cms.promotions : defaultPromotions;
+const programs = cms?.programs?.length ? cms.programs : defaultPrograms;
+const faqs = cms?.faqs?.length ? cms.faqs : defaultFaqs;
+const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
+const featuredPromotion = promotions.find((promotion) => promotion.layout === "first" && promotion.validUntil);
+
+const canonicalUrl = settings.canonicalUrl || "https://blesk-off.ru/";
+const absoluteOgImage = new URL(settings.ogImage || "/images/gallery-1.jpg", canonicalUrl).toString();
+const sameAs = [settings.telegramUrl, settings.vkUrl, settings.dzenUrl].filter(Boolean);
+const structuredData = [
+	{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: settings.siteName,
+		alternateName: "Блеск Офф",
+		url: canonicalUrl,
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "AutoWash",
+		"@id": `${canonicalUrl}#business`,
+		name: "BleskOFF Detailing Studio",
+		url: canonicalUrl,
+		image: absoluteOgImage,
+		telephone: phoneHref,
+		email: settings.email,
+		priceRange: "₽₽₽",
+		address: { "@type": "PostalAddress", streetAddress: settings.address, addressLocality: "Санкт-Петербург", postalCode: "196135", addressCountry: "RU" },
+		geo: { "@type": "GeoCoordinates", latitude: settings.geo?.latitude, longitude: settings.geo?.longitude },
+		openingHoursSpecification: { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], opens: "09:00", closes: "21:00" },
+		sameAs,
+		hasOfferCatalog: { "@type": "OfferCatalog", name: "Услуги детейлинга", itemListElement: services.map((service) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: service.title, description: service.description } })) },
+	},
+];
+
+const process = [
+	["01", "Заявка и оценка", "Присылаете фотографии или приезжаете на осмотр. Уточняем задачу и состояние автомобиля."],
+	["02", "План и стоимость", "Фиксируем состав работ, итоговую стоимость, срок и удобное время приёмки."],
+	["03", "Работа и контроль", "Выполняем согласованные этапы по регламенту. Процесс контролируется на каждом шаге."],
+	["04", "Выдача автомобиля", "Проверяем результат вместе, даём рекомендации и помогаем сохранить эффект надолго."],
+];
+---
+
+<BaseLayout
+	title={settings.seoTitle}
+	description={settings.seoDescription}
+	canonical={settings.canonicalUrl}
+	image={settings.ogImage}
+	noindex={settings.noIndex}
+	structuredData={structuredData}
+>
+	<div id="top"></div>
+	<Header bookingUrl={settings.bookingUrl} />
+
+	<main>
+		<section class="hero">
+			<div class="container hero-grid">
+				<div>
+					<p class="eyebrow">{homepage.eyebrow}</p>
+					<h1>{homepage.title} <em>{homepage.accent}</em></h1>
+					<p class="hero-lead">{homepage.lead}</p>
+					<div class="hero-actions">
+						<a class="button" href={homepage.primaryCtaUrl} target="_blank" rel="noreferrer">{homepage.primaryCtaLabel}</a>
+						<a class="button secondary" href="#services">Посмотреть услуги</a>
+					</div>
+					{featuredPromotion && (
+						<a class="hero-promo" href="#privileges" data-promo-expiry={`${featuredPromotion.validUntil}T23:59:59+03:00`}>
+							<span><time datetime={featuredPromotion.validUntil}>{featuredPromotion.label}</time></span>
+							<strong><b>{featuredPromotion.value}</b> на {featuredPromotion.title.toLocaleLowerCase("ru-RU")}</strong>
+							<i>Условия →</i>
+						</a>
+					)}
+					<div class="hero-meta">
+						<div><span>Режим работы</span><strong>{settings.workingHours}</strong></div>
+						<div><span>Адрес</span><strong>{settings.address}</strong></div>
+					</div>
+				</div>
+
+				<div class="hero-visual reveal">
+					<img src={homepage.image} alt="Автомобиль в студии BleskOFF" width="1680" height="1117" />
+					<div class="hero-note"><span><b>01</b> Один автомобиль</span><span><b>01</b> Ответственный мастер</span></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="trust-bar" aria-label="Преимущества BleskOFF">
+			<div class="container trust-grid">
+				<div class="trust-item"><span>01</span><div><strong>Прозрачный процесс</strong><p>Согласовываем каждый этап до начала работ</p></div></div>
+				<div class="trust-item"><span>02</span><div><strong>Контроль качества</strong><p>Камеры и финальная проверка результата</p></div></div>
+				<div class="trust-item"><span>03</span><div><strong>Комфорт для гостя</strong><p>Зона ожидания и бесплатный паркинг</p></div></div>
+			</div>
+		</section>
+
+		<section class="section" id="services">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Услуги</p><h2>Решение под состояние автомобиля</h2></div>
+					<p>Не навязываем пакет из прайса. Сначала разбираемся в задаче, затем предлагаем необходимый объём работ.</p>
+				</div>
+
+				<div class="services-grid">
+					{services.map((service) => <ServiceCard {...service} />)}
+				</div>
+			</div>
+		</section>
+
+		<section class="section privileges" id="privileges" data-privileges>
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Привилегии BleskOFF</p><h2>Выгодные условия без мелкого шрифта</h2></div>
+					<p>Выберите подходящее предложение и сообщите о нём при записи. Временные акции действуют до 1 августа 2026 года включительно.</p>
+				</div>
+
+				<div class="privileges-grid">
+					{promotions.map((promotion) => <PromotionCard {...promotion} whatsapp={settings.whatsapp} />)}
+				</div>
+			</div>
+		</section>
+
+		<section class="section programs" id="programs">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Готовые сценарии</p><h2>Понятный набор работ под вашу цель</h2></div>
+					<p>Программы служат отправной точкой. После осмотра исключим ненужное и добавим только то, что действительно требуется.</p>
+				</div>
+
+				<div class="program-tabs reveal" data-tabs>
+					<div class="program-nav" role="tablist" aria-label="Программы детейлинга">
+						{programs.map((program, index) => (
+							<button class="program-tab" type="button" role="tab" id={`tab-${program.id}`} aria-controls={`panel-${program.id}`} aria-selected={index === 0 ? "true" : "false"} data-tab={program.id}>
+								<span>{program.number}</span><b>{program.tab}</b>
+							</button>
+						))}
+					</div>
+
+					<div>
+						{programs.map((program, index) => (
+							<div class="program-panel" role="tabpanel" id={`panel-${program.id}`} aria-labelledby={`tab-${program.id}`} hidden={index !== 0} data-panel={program.id}>
+								<h3>{program.title}</h3>
+								<ul class="program-list">
+									{program.items.map((item, itemIndex) => <li><span>{String(itemIndex + 1).padStart(2, "0")}</span>{item}</li>)}
+								</ul>
+								<a class="button" href="#contacts">Получить расчёт</a>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" id="cases">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Пространство и работы</p><h2>Внимание к деталям видно в результате</h2></div>
+					<p>Чистое рабочее место, правильный свет, профессиональные материалы и спокойная работа без потока.</p>
+				</div>
+
+				<div class="cases-grid">
+					<article class="case-card reveal"><img src="/images/gallery-1.jpg" alt="Детейлинг-студия BleskOFF" width="1680" height="1117" loading="lazy" /><div class="case-overlay"><span>Студия</span><h3>Подготовленное пространство для точной работы</h3></div></article>
+					<article class="case-card reveal"><img src="/images/service-polish.jpg" alt="Полировка автомобиля" width="1536" height="1024" loading="lazy" /><div class="case-overlay"><span>Кузов</span><h3>Полировка и восстановление блеска</h3></div></article>
+					<article class="case-card reveal"><img src="/images/service-film.jpg" alt="Защита кузова автомобиля" width="1024" height="1536" loading="lazy" /><div class="case-overlay"><span>Защита</span><h3>Плёнка для зон ежедневного риска</h3></div></article>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" id="process">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Как проходит работа</p><h2>От первого сообщения до выдачи</h2></div>
+					<p>Простой процесс без неожиданного увеличения сметы и несогласованных дополнительных услуг.</p>
+				</div>
+
+				<div class="process-grid">
+					{process.map(([number, title, text]) => <article class="process-card reveal"><span>{number}</span><h3>{title}</h3><p>{text}</p></article>)}
+				</div>
+			</div>
+		</section>
+
+		<section class="section faq" id="faq">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">FAQ</p><h2>Отвечаем до начала работ</h2></div>
+					<p>Если вопроса нет в списке, напишите нам — оценим задачу по фотографиям или пригласим на осмотр.</p>
+				</div>
+
+				<div class="faq-list reveal">
+					{faqs.map((faq, index) => (
+						<details open={index === 0}>
+							<summary><span>{String(index + 1).padStart(2, "0")}</span><span>{faq.question}</span></summary>
+							<div class="faq-answer">{faq.answer}</div>
+						</details>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="contacts" id="contacts">
+			<div class="container contacts-grid">
+				<div class="reveal">
+					<h2>Записаться<br />на осмотр</h2>
+					<p class="contacts-intro">Осмотр поможет точно определить объём работ и зафиксировать стоимость до старта.</p>
+				</div>
+
+				<div class="reveal">
+					<div class="contact-links">
+						<a class="contact-link" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
+						<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
+						<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
+					</div>
+					<div class="contact-actions">
+						<a class="button" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a>
+						<a class="button secondary" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">Написать в WhatsApp</a>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer-inner">
+			<span>© {new Date().getFullYear()} BleskOFF Detailing Studio</span>
+			<span>Санкт-Петербург · {settings.workingHours}</span>
+			<a href="https://blesk-off.ru/polit">Политика конфиденциальности</a>
+		</div>
+	</footer>
+
+	<a class="mobile-booking" href={settings.bookingUrl} target="_blank" rel="noreferrer">Записаться онлайн</a>
+
+	<script>
+		const now = new Date();
+		document.querySelectorAll<HTMLElement>("[data-promo-expiry]").forEach((promotion) => {
+			const expiry = new Date(promotion.dataset.promoExpiry ?? "");
+			if (!Number.isNaN(expiry.getTime()) && now > expiry) promotion.remove();
+		});
+
+		const privileges = document.querySelector<HTMLElement>("[data-privileges]");
+		if (privileges && !privileges.querySelector(".privilege-card[data-promo-expiry]")) {
+			privileges.classList.add("is-evergreen");
+			const description = privileges.querySelector<HTMLElement>(".section-heading > p");
+			if (description) description.textContent = "Постоянные программы для гостей, которые доверяют BleskOFF уход за одним или несколькими автомобилями.";
+		}
+
+		document.querySelectorAll<HTMLElement>("[data-tabs]").forEach((tabs) => {
+			const buttons = Array.from(tabs.querySelectorAll<HTMLButtonElement>("[data-tab]"));
+			const panels = Array.from(tabs.querySelectorAll<HTMLElement>("[data-panel]"));
+
+			buttons.forEach((button) => {
+				button.addEventListener("click", () => {
+					const target = button.dataset.tab;
+					buttons.forEach((item) => item.setAttribute("aria-selected", String(item === button)));
+					panels.forEach((panel) => { panel.hidden = panel.dataset.panel !== target; });
+				});
+			});
+		});
+
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add("is-visible");
+					observer.unobserve(entry.target);
+				}
+			});
+		}, { threshold: 0.08, rootMargin: "0px 0px -35px" });
+
+		document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+	</script>
+</BaseLayout>

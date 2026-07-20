@@ -1,0 +1,23 @@
+---
+interface Props {
+	index: string;
+	title: string;
+	lead: string;
+	description: string;
+	image: string;
+}
+
+const { index, title, lead, description, image } = Astro.props;
+---
+
+<article class="service-card reveal">
+	<div class="service-media">
+		<img src={image} alt={title} width="1024" height="768" loading="lazy" />
+		<span>{index}</span>
+	</div>
+	<div class="service-copy">
+		<h3>{title}</h3>
+		<p><strong>{lead}</strong> {description}</p>
+		<a href="#contacts">Обсудить задачу <span aria-hidden="true">↗</span></a>
+	</div>
+</article>

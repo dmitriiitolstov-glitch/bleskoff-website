@@ -1,0 +1,56 @@
+---
+import "../styles/global.css";
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonical?: string;
+	image?: string;
+	noindex?: boolean;
+	structuredData?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+	title = "BleskOFF — детейлинг и мойка в Санкт-Петербурге",
+	description = "Премиальный уход, восстановление и защита автомобиля в Московском районе Санкт-Петербурга.",
+	canonical,
+	image = "/images/gallery-1.jpg",
+	noindex = false,
+	structuredData,
+} = Astro.props;
+
+const site = Astro.site ?? new URL("https://blesk-off.ru");
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site);
+const socialImageUrl = new URL(image, site);
+---
+
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"} />
+		<meta name="theme-color" content="#111111" />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={socialImageUrl} />
+		<meta property="og:image:alt" content="Автомобиль в детейлинг-студии BleskOFF" />
+		<meta property="og:site_name" content="BleskOFF" />
+		<meta property="og:locale" content="ru_RU" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={socialImageUrl} />
+		<link rel="icon" href="/favicon.ico" sizes="any" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<title>{title}</title>
+		{structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

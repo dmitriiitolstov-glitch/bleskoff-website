@@ -1,0 +1,51 @@
+---
+interface Props {
+	bookingUrl?: string;
+}
+
+const { bookingUrl = "https://online.rocketwash.me/?id=107920" } = Astro.props;
+---
+
+<header class="site-header" data-header>
+	<div class="container header-inner">
+		<a class="brand" href="#top" aria-label="BleskOFF — на главную">
+			<img src="/images/logo.png" alt="BleskOFF Detailing Studio" width="222" height="65" />
+		</a>
+
+		<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+			<span></span><span></span>
+			<span class="sr-only">Открыть меню</span>
+		</button>
+
+		<nav class="site-nav" id="site-nav" aria-label="Основная навигация">
+			<a href="#services">Услуги</a>
+			<a href="#privileges">Привилегии</a>
+			<a href="#programs">Программы</a>
+			<a href="#cases">Работы</a>
+			<a href="#process">Процесс</a>
+			<a href="#contacts">Контакты</a>
+		</nav>
+
+		<a class="header-cta" href={bookingUrl} target="_blank" rel="noreferrer">
+			Записаться онлайн
+		</a>
+	</div>
+</header>
+
+<script>
+	const header = document.querySelector<HTMLElement>("[data-header]");
+	const toggle = header?.querySelector<HTMLButtonElement>(".nav-toggle");
+	const nav = header?.querySelector<HTMLElement>(".site-nav");
+
+	const setMenu = (open: boolean) => {
+		toggle?.setAttribute("aria-expanded", String(open));
+		header?.classList.toggle("menu-open", open);
+		document.body.classList.toggle("nav-open", open);
+	};
+
+	toggle?.addEventListener("click", () => setMenu(toggle.getAttribute("aria-expanded") !== "true"));
+	nav?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
+	window.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") setMenu(false);
+	});
+</script>

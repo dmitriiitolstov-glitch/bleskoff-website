@@ -1,0 +1,28 @@
+---
+import type { Promotion } from "../content/defaults";
+
+interface Props extends Promotion {
+	whatsapp: string;
+}
+
+const { layout, label, value, title, description, permanent, validUntil, details, ctaText, whatsappMessage, whatsapp } = Astro.props;
+const expiry = !permanent && validUntil ? `${validUntil}T23:59:59+03:00` : undefined;
+const ctaUrl = `https://wa.me/${whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
+---
+
+<article class={`privilege-card privilege-card--${layout} reveal`} data-promo-expiry={expiry}>
+	<div class="privilege-card__content">
+		{validUntil && !permanent ? <time datetime={validUntil}>{label}</time> : label && <span class="privilege-label">{label}</span>}
+		{value && <strong class="privilege-value">{value}</strong>}
+		<h3>{title}</h3>
+		<p>{description}</p>
+		{details && details.length > 0 && (
+			<div class="fleet-values">
+				{details.map((detail) => (
+					<strong><b>{detail.label.split(" ")[0]}</b>{" "}{detail.label.split(" ").slice(1).join(" ")}<span>{detail.value}</span></strong>
+				))}
+			</div>
+		)}
+		<a href={ctaUrl} target="_blank" rel="noreferrer">{ctaText} <span>↗</span></a>
+	</div>
+</article>
