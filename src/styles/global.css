@@ -1086,6 +1086,11 @@ img {
 	align-items: stretch;
 }
 
+.service-hero__copy,
+.service-hero__visual {
+	min-width: 0;
+}
+
 .breadcrumbs {
 	display: flex;
 	flex-wrap: wrap;
@@ -1103,12 +1108,13 @@ img {
 }
 
 .service-hero h1 {
-	max-width: 760px;
+	max-width: 100%;
 	margin: 0;
-	font-size: clamp(54px, 7vw, 106px);
+	font-size: clamp(52px, 4.4vw, 76px);
 	font-weight: 800;
-	letter-spacing: -0.07em;
-	line-height: 0.88;
+	letter-spacing: -0.06em;
+	line-height: 0.92;
+	text-wrap: balance;
 	text-transform: uppercase;
 }
 
@@ -1256,8 +1262,10 @@ img {
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	min-width: 0;
 	min-height: 570px;
-	padding: clamp(26px, 3vw, 42px);
+	padding: clamp(26px, 2.4vw, 36px);
+	overflow: hidden;
 	border-right: 1px solid rgba(255, 255, 255, 0.5);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -1293,16 +1301,25 @@ img {
 }
 
 .price-option h3 {
+	display: flex;
+	align-items: flex-end;
+	min-height: 2.05em;
 	margin: 46px 0 10px;
-	font-size: clamp(27px, 3vw, 42px);
-	letter-spacing: -0.045em;
-	line-height: 0.95;
+	max-width: 100%;
+	font-size: clamp(25px, 1.8vw, 30px);
+	letter-spacing: -0.04em;
+	line-height: 1.02;
+	overflow-wrap: anywhere;
+	hyphens: auto;
+	text-wrap: balance;
 	text-transform: uppercase;
 }
 
 .price-option > strong {
-	font-size: clamp(25px, 2.6vw, 38px);
+	max-width: 100%;
+	font-size: clamp(24px, 2vw, 32px);
 	letter-spacing: -0.04em;
+	overflow-wrap: anywhere;
 }
 
 .price-option > p {
@@ -1649,12 +1666,21 @@ img {
 		min-height: 600px;
 	}
 
+	.service-hero h1 {
+		font-size: clamp(58px, 9vw, 92px);
+	}
+
 	.price-options {
 		grid-template-columns: 1fr;
 	}
 
 	.price-option {
 		min-height: 510px;
+	}
+
+	.price-option h3 {
+		min-height: 0;
+		font-size: clamp(30px, 5vw, 42px);
 	}
 
 	.related-services__grid {
