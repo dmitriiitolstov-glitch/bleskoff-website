@@ -243,9 +243,13 @@ export function mergeServices(cmsServices?: Service[]): Service[] {
 	return cmsServices.map((service) => {
 		const slug = service.slug || service.title.toLocaleLowerCase("ru-RU").replace(/[^a-z0-9а-яё]+/gi, "-").replace(/^-|-$/g, "");
 		const fallback = defaultsBySlug.get(slug) ?? defaultsByTitle.get(service.title) ?? defaultServices[0];
+		const populatedCmsFields = Object.fromEntries(
+			Object.entries(service).filter(([, value]) => value !== null && value !== undefined && value !== ""),
+		) as Partial<Service>;
+
 		return {
 			...fallback,
-			...service,
+			...populatedCmsFields,
 			slug,
 			image: service.image || fallback.image,
 			outcomes: service.outcomes?.length ? service.outcomes : fallback.outcomes,
