@@ -3,13 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PromotionCard from "../components/PromotionCard.astro";
 import ServiceCard from "../components/ServiceCard.astro";
-import { defaultFaqs, defaultHomepage, defaultPrograms, defaultPromotions, defaultServices, defaultSettings } from "../content/defaults";
+import { defaultFaqs, defaultHomepage, defaultPrograms, defaultPromotions, defaultSettings, mergeServices } from "../content/defaults";
 import { getCmsContent } from "../lib/cms";
 
 const cms = await getCmsContent();
 const settings = { ...defaultSettings, ...(cms?.settings ?? {}) };
 const homepage = { ...defaultHomepage, ...(cms?.homepage ?? {}) };
-const services = cms?.services?.length ? cms.services : defaultServices;
+const services = mergeServices(cms?.services);
 const promotions = cms?.promotions?.length ? cms.promotions : defaultPromotions;
 const programs = cms?.programs?.length ? cms.programs : defaultPrograms;
 const faqs = cms?.faqs?.length ? cms.faqs : defaultFaqs;

@@ -25,7 +25,11 @@ const query = `{
     "image": coalesce(image.asset->url, imagePath)
   },
   "services": *[_type == "service" && active != false] | order(order asc){
-    index, title, lead, description, "image": coalesce(image.asset->url, imagePath)
+    index, title, "slug": slug.current, lead, description, priceFrom, priceLead, duration,
+    outcomes, included, priceOptions, process, comparisonCaption, faqs, seoTitle, seoDescription,
+    "image": coalesce(image.asset->url, imagePath),
+    "beforeImage": beforeImage.asset->url,
+    "afterImage": afterImage.asset->url
   },
   "promotions": *[_type == "promotion" && active != false] | order(order asc){
     layout, label, value, title, description, permanent, validUntil, details, ctaText, whatsappMessage

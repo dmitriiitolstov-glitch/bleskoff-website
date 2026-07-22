@@ -4,11 +4,12 @@ interface Props {
 }
 
 const { bookingUrl = "https://online.rocketwash.me/?id=107920" } = Astro.props;
+const homePrefix = Astro.url.pathname === "/" ? "" : "/";
 ---
 
 <header class="site-header" data-header>
 	<div class="container header-inner">
-		<a class="brand" href="#top" aria-label="BleskOFF — на главную">
+		<a class="brand" href={homePrefix || "#top"} aria-label="BleskOFF — на главную">
 			<img src="/images/logo.png" alt="BleskOFF Detailing Studio" width="222" height="65" />
 		</a>
 
@@ -18,12 +19,12 @@ const { bookingUrl = "https://online.rocketwash.me/?id=107920" } = Astro.props;
 		</button>
 
 		<nav class="site-nav" id="site-nav" aria-label="Основная навигация">
-			<a href="#services">Услуги</a>
-			<a href="#privileges">Привилегии</a>
-			<a href="#programs">Программы</a>
-			<a href="#cases">Работы</a>
-			<a href="#process">Процесс</a>
-			<a href="#contacts">Контакты</a>
+			<a href={`${homePrefix}#services`}>Услуги</a>
+			<a href={`${homePrefix}#privileges`}>Привилегии</a>
+			<a href={`${homePrefix}#programs`}>Программы</a>
+			<a href={`${homePrefix}#cases`}>Работы</a>
+			<a href={`${homePrefix}#process`}>Процесс</a>
+			<a href={`${homePrefix}#contacts`}>Контакты</a>
 		</nav>
 
 		<a class="header-cta" href={bookingUrl} target="_blank" rel="noreferrer">

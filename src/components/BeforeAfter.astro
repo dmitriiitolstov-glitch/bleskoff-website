@@ -1,0 +1,36 @@
+---
+interface Props {
+	before: string;
+	after: string;
+	title: string;
+	caption?: string;
+	illustration?: boolean;
+}
+
+const { before, after, title, caption, illustration = false } = Astro.props;
+---
+
+<figure class="comparison-figure">
+	<div class="before-after" data-before-after style="--comparison-position: 50%;">
+		<img class="before-after__image before-after__after" src={after} alt={`${title} — после`} width="1536" height="1024" loading="lazy" />
+		<div class:list={["before-after__before", { "is-illustration": illustration }]}>
+			<img class="before-after__image" src={before} alt={`${title} — до`} width="1536" height="1024" loading="lazy" />
+		</div>
+		<span class="before-after__label before-after__label--before">До</span>
+		<span class="before-after__label before-after__label--after">После</span>
+		<div class="before-after__divider" aria-hidden="true"><span>↔</span></div>
+		<label class="sr-only" for={`comparison-${title}`}>Покажите фотографию до или после</label>
+		<input id={`comparison-${title}`} class="before-after__range" type="range" min="0" max="100" value="50" aria-label={`Сравнение до и после: ${title}`} />
+	</div>
+	{caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-before-after]").forEach((comparison) => {
+		const range = comparison.querySelector<HTMLInputElement>(".before-after__range");
+		if (!range) return;
+		const update = () => comparison.style.setProperty("--comparison-position", `${range.value}%`);
+		range.addEventListener("input", update);
+		update();
+	});
+</script>

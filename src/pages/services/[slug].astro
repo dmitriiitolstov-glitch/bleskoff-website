@@ -1,0 +1,208 @@
+---
+import BeforeAfter from "../../components/BeforeAfter.astro";
+import Header from "../../components/Header.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import { defaultSettings, mergeServices, type Service } from "../../content/defaults";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCmsContent } from "../../lib/cms";
+
+export async function getStaticPaths() {
+	const cms = await getCmsContent();
+	const services = mergeServices(cms?.services);
+	const settings = { ...defaultSettings, ...(cms?.settings ?? {}) };
+
+	return services.map((service) => ({
+		params: { slug: service.slug },
+		props: { service, services, settings },
+	}));
+}
+
+interface Props {
+	service: Service;
+	services: Service[];
+	settings: typeof defaultSettings & Record<string, any>;
+}
+
+const { service, services, settings } = Astro.props as Props;
+const relatedServices = services.filter((item) => item.slug !== service.slug).slice(0, 3);
+const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
+const canonicalBase = String(settings.canonicalUrl || "https://blesk-off.ru/").replace(/\/?$/, "/");
+const canonical = `${canonicalBase}services/${service.slug}/`;
+const priceNumber = Number(service.priceFrom.replace(/\D/g, "")) || undefined;
+const beforeImage = service.beforeImage || service.afterImage || service.image;
+const afterImage = service.afterImage || service.beforeImage || service.image;
+const comparisonIsIllustration = !service.beforeImage || !service.afterImage;
+const whatsappMessage = encodeURIComponent(`Здравствуйте! Хочу уточнить стоимость услуги «${service.title}» для моего автомобиля.`);
+const whatsappUrl = `https://wa.me/${settings.whatsapp}?text=${whatsappMessage}`;
+
+const structuredData = [
+	{
+		"@context": "https://schema.org",
+		"@type": "Service",
+		name: service.title,
+		description: service.seoDescription || service.description,
+		url: canonical,
+		image: new URL(service.image, canonicalBase).toString(),
+		areaServed: { "@type": "City", name: "Санкт-Петербург" },
+		provider: { "@type": "AutoWash", "@id": `${canonicalBase}#business`, name: "BleskOFF Detailing Studio", telephone: phoneHref },
+		offers: { "@type": "Offer", priceCurrency: "RUB", ...(priceNumber ? { price: priceNumber } : {}), description: service.priceLead, url: canonical },
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			{ "@type": "ListItem", position: 1, name: "Главная", item: canonicalBase },
+			{ "@type": "ListItem", position: 2, name: "Услуги", item: `${canonicalBase}#services` },
+			{ "@type": "ListItem", position: 3, name: service.title, item: canonical },
+		],
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		mainEntity: service.faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
+	},
+];
+---
+
+<BaseLayout
+	title={service.seoTitle}
+	description={service.seoDescription}
+	canonical={canonical}
+	image={service.image}
+	noindex={settings.noIndex}
+	structuredData={structuredData}
+>
+	<div id="top"></div>
+	<Header bookingUrl={settings.bookingUrl} />
+
+	<main class="service-page">
+		<section class="service-hero">
+			<div class="container service-hero__grid">
+				<div class="service-hero__copy">
+					<nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/#services">Услуги</a><span>/</span><span>{service.title}</span></nav>
+					<p class="eyebrow">Услуга · {service.index}</p>
+					<h1>{service.title}</h1>
+					<p class="service-hero__lead"><strong>{service.lead}</strong> {service.description}</p>
+					<div class="service-hero__facts">
+						<div><span>Стоимость</span><strong>{service.priceFrom}</strong></div>
+						<div><span>Срок</span><strong>{service.duration}</strong></div>
+					</div>
+					<div class="hero-actions">
+						<a class="button" href={whatsappUrl} target="_blank" rel="noreferrer">Рассчитать стоимость</a>
+						<a class="button secondary" href="#prices">Посмотреть варианты</a>
+					</div>
+				</div>
+				<div class="service-hero__visual reveal">
+					<img src={service.image} alt={service.title} width="1536" height="1024" />
+					<div class="service-hero__stamp"><span>BleskOFF</span><strong>Санкт-Петербург</strong></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="service-outcomes" aria-label="Результат услуги">
+			<div class="container service-outcomes__grid">
+				{service.outcomes.map((outcome, index) => <div><span>{String(index + 1).padStart(2, "0")}</span><p>{outcome}</p></div>)}
+			</div>
+		</section>
+
+		<section class="section service-pricing" id="prices">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Стоимость</p><h2>Понятный ориентир до начала работ</h2></div>
+					<p>{service.priceLead} Точную сумму подтверждаем до приёмки автомобиля в работу.</p>
+				</div>
+				<div class="price-options">
+					{service.priceOptions.map((option, index) => (
+						<article class:list={["price-option", { "is-featured": option.featured }]}>
+							<div class="price-option__head"><span>({String(index + 1).padStart(2, "0")})</span>{option.featured && <b>Популярный</b>}</div>
+							<h3>{option.title}</h3>
+							<strong>{option.price}</strong>
+							<p>{option.description}</p>
+							<ul>{option.items.map((item) => <li>{item}</li>)}</ul>
+							<a href={whatsappUrl} target="_blank" rel="noreferrer">Уточнить стоимость <span>↗</span></a>
+						</article>
+					))}
+				</div>
+				<p class="price-note">Стоимость на странице — ориентир. Итог зависит от класса автомобиля, исходного состояния и выбранного состава работ.</p>
+			</div>
+		</section>
+
+		<section class="section comparison-section">
+			<div class="container comparison-grid">
+				<div class="comparison-copy reveal">
+					<p class="section-kicker">До / после</p>
+					<h2>Разницу удобно увидеть в движении</h2>
+					<p>Передвигайте разделитель мышью, пальцем или стрелками клавиатуры. Когда в админку будут загружены реальные парные фотографии, они автоматически появятся здесь.</p>
+				</div>
+				<BeforeAfter before={beforeImage} after={afterImage} title={service.title} caption={service.comparisonCaption} illustration={comparisonIsIllustration} />
+			</div>
+		</section>
+
+		<section class="section service-included">
+			<div class="container included-grid">
+				<div class="reveal"><p class="section-kicker">Состав услуги</p><h2>Что входит в работу</h2><p>Состав можно скорректировать после осмотра — оставим только необходимые этапы.</p></div>
+				<ol class="included-list reveal">
+					{service.included.map((item, index) => <li><span>{String(index + 1).padStart(2, "0")}</span><strong>{item}</strong></li>)}
+				</ol>
+			</div>
+		</section>
+
+		<section class="section service-process" id="process">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Регламент</p><h2>Спокойный процесс без сюрпризов</h2></div>
+					<p>Каждый этап понятен заранее. Дополнительные работы выполняем только после согласования.</p>
+				</div>
+				<div class="process-grid">
+					{service.process.map((step) => <article class="process-card reveal"><span>{step.number}</span><h3>{step.title}</h3><p>{step.text}</p></article>)}
+				</div>
+			</div>
+		</section>
+
+		<section class="section faq service-faq">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">FAQ</p><h2>Важное до записи</h2></div>
+					<p>Если вашего вопроса нет в списке, пришлите фотографии автомобиля — ответим и подскажем подходящий вариант.</p>
+				</div>
+				<div class="faq-list reveal">
+					{service.faqs.map((faq, index) => <details open={index === 0}><summary><span>{String(index + 1).padStart(2, "0")}</span><span>{faq.question}</span></summary><div class="faq-answer">{faq.answer}</div></details>)}
+				</div>
+			</div>
+		</section>
+
+		<section class="section related-services">
+			<div class="container">
+				<div class="section-heading reveal">
+					<div><p class="section-kicker">Другие услуги</p><h2>Можно собрать комплекс</h2></div>
+					<p>Объединим совместимые работы в один визит и заранее согласуем общую стоимость.</p>
+				</div>
+				<div class="services-grid related-services__grid">{relatedServices.map((item) => <ServiceCard {...item} />)}</div>
+			</div>
+		</section>
+
+		<section class="contacts" id="contacts">
+			<div class="container contacts-grid">
+				<div class="reveal"><h2>Уточнить<br />стоимость</h2><p class="contacts-intro">Пришлите марку, модель и несколько фотографий — дадим предварительный ориентир и предложим время для осмотра.</p></div>
+				<div class="reveal">
+					<div class="contact-links">
+						<a class="contact-link" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
+						<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
+						<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
+					</div>
+					<div class="contact-actions"><a class="button" href={whatsappUrl} target="_blank" rel="noreferrer">Написать в WhatsApp</a><a class="button secondary" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a></div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer"><div class="container footer-inner"><span>© {new Date().getFullYear()} BleskOFF Detailing Studio</span><span>Санкт-Петербург · {settings.workingHours}</span><a href="https://blesk-off.ru/polit">Политика конфиденциальности</a></div></footer>
+	<a class="mobile-booking" href={settings.bookingUrl} target="_blank" rel="noreferrer">Записаться онлайн</a>
+
+	<script>
+		const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+			if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); }
+		}), { threshold: 0.08, rootMargin: "0px 0px -35px" });
+		document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+	</script>
+</BaseLayout>

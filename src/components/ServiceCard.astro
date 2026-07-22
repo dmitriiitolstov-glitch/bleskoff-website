@@ -2,12 +2,14 @@
 interface Props {
 	index: string;
 	title: string;
+	slug: string;
 	lead: string;
 	description: string;
 	image: string;
+	priceFrom?: string;
 }
 
-const { index, title, lead, description, image } = Astro.props;
+const { index, title, slug, lead, description, image, priceFrom } = Astro.props;
 ---
 
 <article class="service-card reveal">
@@ -18,6 +20,7 @@ const { index, title, lead, description, image } = Astro.props;
 	<div class="service-copy">
 		<h3>{title}</h3>
 		<p><strong>{lead}</strong> {description}</p>
-		<a href="#contacts">Обсудить задачу <span aria-hidden="true">↗</span></a>
+		{priceFrom && <small class="service-price">Стоимость {priceFrom}</small>}
+		<a href={`/services/${slug}/`}>Подробнее об услуге <span aria-hidden="true">↗</span></a>
 	</div>
 </article>
