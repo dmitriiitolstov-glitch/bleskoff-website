@@ -1083,6 +1083,9 @@ img {
 }
 
 .amo-form-shell {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
 	width: 100%;
 	min-width: 0;
 	min-height: 480px;
@@ -1090,9 +1093,21 @@ img {
 	background: var(--white);
 }
 
-.amo-form-shell iframe,
 .amo-form-shell > div {
 	width: 100% !important;
+}
+
+.amo-form-shell iframe {
+	display: block;
+	width: 100% !important;
+	/* amoCRM строит внутренний макет шириной до 896 px. Не растягиваем
+	   iframe сильнее, иначе рядом с формой появляется пустая область. */
+	max-width: 896px !important;
+	margin-inline: auto !important;
+	border: 0;
+}
+
+.amo-form-shell > div {
 	max-width: 100% !important;
 }
 
