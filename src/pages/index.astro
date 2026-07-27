@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import AmoCrmForm from "../components/AmoCrmForm.astro";
 import Header from "../components/Header.astro";
 import PromotionCard from "../components/PromotionCard.astro";
 import ServiceCard from "../components/ServiceCard.astro";
@@ -207,22 +208,32 @@ const process = [
 		</section>
 
 		<section class="contacts" id="contacts">
-			<div class="container contacts-grid">
-				<div class="reveal">
-					<h2>Записаться<br />на осмотр</h2>
-					<p class="contacts-intro">Осмотр поможет точно определить объём работ и зафиксировать стоимость до старта.</p>
+			<div class="container">
+				<div class="contacts-grid">
+					<div class="reveal">
+						<h2>Записаться<br />на осмотр</h2>
+						<p class="contacts-intro">Осмотр поможет точно определить объём работ и зафиксировать стоимость до старта.</p>
+					</div>
+
+					<div class="reveal">
+						<div class="contact-links">
+							<a class="contact-link" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
+							<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
+							<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
+						</div>
+						<div class="contact-actions">
+							<a class="button" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a>
+							<a class="button secondary" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">Написать в WhatsApp</a>
+						</div>
+					</div>
 				</div>
 
-				<div class="reveal">
-					<div class="contact-links">
-						<a class="contact-link" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
-						<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
-						<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
+				<div class="contact-form reveal">
+					<div class="contact-form__head">
+						<p class="section-kicker">Заявка с сайта</p>
+						<p>Оставьте контакты и коротко опишите задачу. Заявка сразу появится у менеджера в amoCRM.</p>
 					</div>
-					<div class="contact-actions">
-						<a class="button" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a>
-						<a class="button secondary" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">Написать в WhatsApp</a>
-					</div>
+					<AmoCrmForm />
 				</div>
 			</div>
 		</section>
