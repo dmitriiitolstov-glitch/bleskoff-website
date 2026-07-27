@@ -89,7 +89,7 @@ const structuredData = [
 						<div><span>Срок</span><strong>{service.duration}</strong></div>
 					</div>
 					<div class="hero-actions">
-						<a class="button" href={whatsappUrl} target="_blank" rel="noreferrer">Рассчитать стоимость</a>
+						<a class="button" href="#contact-form">Рассчитать стоимость</a>
 						<a class="button secondary" href="#prices">Посмотреть варианты</a>
 					</div>
 				</div>
@@ -120,7 +120,7 @@ const structuredData = [
 							<strong>{option.price}</strong>
 							<p>{option.description}</p>
 							<ul>{option.items.map((item) => <li>{item}</li>)}</ul>
-							<a href={whatsappUrl} target="_blank" rel="noreferrer">Уточнить стоимость <span>↗</span></a>
+							<a href="#contact-form">Уточнить стоимость <span>↓</span></a>
 						</article>
 					))}
 				</div>
@@ -196,7 +196,7 @@ const structuredData = [
 					</div>
 				</div>
 
-				<div class="contact-form reveal">
+				<div class="contact-form reveal" id="contact-form">
 					<div class="contact-form__head">
 						<p class="section-kicker">Заявка на услугу</p>
 						<p>В комментарии напишите «{service.title}» и укажите марку автомобиля. Заявка сразу появится у менеджера в amoCRM.</p>

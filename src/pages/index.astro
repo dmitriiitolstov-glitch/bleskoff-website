@@ -73,7 +73,7 @@ const process = [
 					<h1>{homepage.title} <em>{homepage.accent}</em></h1>
 					<p class="hero-lead">{homepage.lead}</p>
 					<div class="hero-actions">
-						<a class="button" href={homepage.primaryCtaUrl} target="_blank" rel="noreferrer">{homepage.primaryCtaLabel}</a>
+						<a class="button" href="#contact-form">{homepage.primaryCtaLabel}</a>
 						<a class="button secondary" href="#services">Посмотреть услуги</a>
 					</div>
 					{featuredPromotion && (
@@ -125,7 +125,7 @@ const process = [
 				</div>
 
 				<div class="privileges-grid">
-					{promotions.map((promotion) => <PromotionCard {...promotion} whatsapp={settings.whatsapp} />)}
+					{promotions.map((promotion) => <PromotionCard {...promotion} />)}
 				</div>
 			</div>
 		</section>
@@ -228,7 +228,7 @@ const process = [
 					</div>
 				</div>
 
-				<div class="contact-form reveal">
+				<div class="contact-form reveal" id="contact-form">
 					<div class="contact-form__head">
 						<p class="section-kicker">Заявка с сайта</p>
 						<p>Оставьте контакты и коротко опишите задачу. Заявка сразу появится у менеджера в amoCRM.</p>

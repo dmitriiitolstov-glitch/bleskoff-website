@@ -1053,6 +1053,7 @@ img {
 }
 
 .contact-form {
+	scroll-margin-top: calc(var(--header) + 24px);
 	margin-top: clamp(48px, 6vw, 80px);
 	padding: clamp(18px, 2.5vw, 34px);
 	background: var(--paper);
