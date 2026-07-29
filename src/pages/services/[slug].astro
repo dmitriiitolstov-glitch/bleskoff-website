@@ -133,7 +133,10 @@ const structuredData = [
 				<div class="comparison-copy reveal">
 					<p class="section-kicker">До / после</p>
 					<h2>Разницу удобно увидеть в движении</h2>
-					<p>Передвигайте разделитель мышью, пальцем или стрелками клавиатуры. Когда в админку будут загружены реальные парные фотографии, они автоматически появятся здесь.</p>
+					<p>
+						Передвигайте разделитель мышью, пальцем или стрелками клавиатуры.
+						{comparisonIsIllustration && " Когда в админку будут загружены реальные парные фотографии, они автоматически появятся здесь."}
+					</p>
 				</div>
 				<BeforeAfter before={beforeImage} after={afterImage} title={service.title} caption={service.comparisonCaption} illustration={comparisonIsIllustration} />
 			</div>
