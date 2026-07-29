@@ -1707,10 +1707,12 @@ img {
 
 .related-services__grid .service-card {
 	grid-template-columns: 1fr;
+	grid-template-rows: clamp(260px, 22vw, 340px) minmax(310px, 1fr);
 }
 
 .related-services__grid .service-media {
-	min-height: 260px;
+	height: 100%;
+	min-height: 0;
 }
 
 .related-services__grid .service-copy {
@@ -1947,6 +1949,10 @@ img {
 
 	.service-copy {
 		min-height: 300px;
+	}
+
+	.related-services__grid .service-card {
+		grid-template-rows: 250px minmax(300px, 1fr);
 	}
 
 	.service-hero {
