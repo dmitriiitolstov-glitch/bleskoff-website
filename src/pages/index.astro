@@ -16,6 +16,16 @@ const programs = cms?.programs?.length ? cms.programs : defaultPrograms;
 const faqs = cms?.faqs?.length ? cms.faqs : defaultFaqs;
 const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
 const featuredPromotion = promotions.find((promotion) => promotion.layout === "first" && promotion.validUntil);
+const heroSlides = [
+	{ src: "/images/hero/hero-studio.jpg", alt: "Мастер работает с автомобилем в студии BleskOFF", width: 1800, height: 1350, position: "62% center" },
+	{ src: "/images/hero/hero-jaguar.jpg", alt: "Jaguar в подготовленной детейлинг-студии BleskOFF", width: 2000, height: 1330, position: "54% center" },
+	{ src: "/images/hero/hero-porsche.jpg", alt: "Жёлтый Porsche после детейлинга в BleskOFF", width: 2000, height: 1500, position: "45% center" },
+	{ src: "/images/hero/hero-bmw.jpg", alt: "BMW i8 в рабочей зоне BleskOFF", width: 2000, height: 1500, position: "53% center" },
+	{ src: "/images/hero/hero-buick.jpg", alt: "Мастер полирует классический Buick в BleskOFF", width: 1337, height: 2000, position: "50% 48%" },
+	{ src: "/images/hero/hero-green.jpg", alt: "Зелёный BMW после ухода за кузовом", width: 2000, height: 1500, position: "50% center" },
+	{ src: "/images/hero/hero-mercedes.jpg", alt: "Красный Mercedes после детейлинга", width: 1136, height: 2000, position: "58% center" },
+	{ src: "/images/hero/hero-wash.jpg", alt: "Автомобиль на бережной мойке в BleskOFF", width: 2000, height: 1500, position: "40% center" },
+];
 
 const canonicalUrl = settings.canonicalUrl || "https://blesk-off.ru/";
 const absoluteOgImage = new URL(settings.ogImage || "/images/gallery-1.jpg", canonicalUrl).toString();
@@ -89,8 +99,32 @@ const process = [
 					</div>
 				</div>
 
-				<div class="hero-visual reveal">
-					<img src={homepage.image} alt="Автомобиль в студии BleskOFF" width="1680" height="1117" />
+				<div class="hero-visual reveal" data-hero-slider aria-roledescription="carousel" aria-label="Автомобили и работы студии BleskOFF">
+					<div class="hero-slides">
+						{heroSlides.map((slide, index) => (
+							<figure class:list={["hero-slide", { "is-active": index === 0 }]} aria-hidden={index === 0 ? "false" : "true"} style={`--hero-position: ${slide.position}`}>
+								<img
+									src={slide.src}
+									alt={slide.alt}
+									width={slide.width}
+									height={slide.height}
+									loading={index === 0 ? "eager" : "lazy"}
+									fetchpriority={index === 0 ? "high" : "auto"}
+								/>
+							</figure>
+						))}
+					</div>
+					<div class="hero-slider-controls">
+						<div class="hero-slider-count" aria-live="polite"><span data-hero-current>01</span><i>/</i><span>{String(heroSlides.length).padStart(2, "0")}</span></div>
+						<div class="hero-slider-arrows">
+							<button type="button" data-hero-prev aria-label="Предыдущее фото">
+								<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7M8 12h11" /></svg>
+							</button>
+							<button type="button" data-hero-next aria-label="Следующее фото">
+								<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7m7-7H5" /></svg>
+							</button>
+						</div>
+					</div>
 					<div class="hero-note"><span><b>01</b> Один автомобиль</span><span><b>01</b> Ответственный мастер</span></div>
 				</div>
 			</div>
@@ -250,6 +284,44 @@ const process = [
 	<a class="mobile-booking" href={settings.bookingUrl} target="_blank" rel="noreferrer">Записаться онлайн</a>
 
 	<script>
+		document.querySelectorAll<HTMLElement>("[data-hero-slider]").forEach((slider) => {
+			const slides = Array.from(slider.querySelectorAll<HTMLElement>(".hero-slide"));
+			const previousButton = slider.querySelector<HTMLButtonElement>("[data-hero-prev]");
+			const nextButton = slider.querySelector<HTMLButtonElement>("[data-hero-next]");
+			const currentLabel = slider.querySelector<HTMLElement>("[data-hero-current]");
+			let currentIndex = 0;
+			let pointerStartX: number | null = null;
+
+			const showSlide = (nextIndex: number) => {
+				currentIndex = (nextIndex + slides.length) % slides.length;
+				slides.forEach((slide, index) => {
+					const isActive = index === currentIndex;
+					slide.classList.toggle("is-active", isActive);
+					slide.setAttribute("aria-hidden", String(!isActive));
+				});
+				if (currentLabel) currentLabel.textContent = String(currentIndex + 1).padStart(2, "0");
+			};
+
+			previousButton?.addEventListener("click", () => showSlide(currentIndex - 1));
+			nextButton?.addEventListener("click", () => showSlide(currentIndex + 1));
+			slider.addEventListener("keydown", (event) => {
+				if (event.key === "ArrowLeft") showSlide(currentIndex - 1);
+				if (event.key === "ArrowRight") showSlide(currentIndex + 1);
+			});
+			slider.addEventListener("pointerdown", (event) => {
+				if ((event.target as Element).closest("button")) return;
+				pointerStartX = event.clientX;
+			});
+			slider.addEventListener("pointerup", (event) => {
+				if (pointerStartX === null) return;
+				const distance = event.clientX - pointerStartX;
+				pointerStartX = null;
+				if (Math.abs(distance) < 45) return;
+				showSlide(currentIndex + (distance < 0 ? 1 : -1));
+			});
+			slider.addEventListener("pointercancel", () => { pointerStartX = null; });
+		});
+
 		const now = new Date();
 		document.querySelectorAll<HTMLElement>("[data-promo-expiry]").forEach((promotion) => {
 			const expiry = new Date(promotion.dataset.promoExpiry ?? "");
