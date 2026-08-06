@@ -94,6 +94,13 @@ const process = [
 						</a>
 					)}
 					<div class="hero-meta">
+						<a class="hero-meta__phone" href={`tel:${phoneHref}`} aria-label={`Позвонить в BleskOFF: ${settings.phone}`}>
+							<span>Позвонить</span>
+							<strong>
+								{settings.phone}
+								<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7" /></svg>
+							</strong>
+						</a>
 						<div><span>Режим работы</span><strong>{settings.workingHours}</strong></div>
 						<div><span>Адрес</span><strong>{settings.address}</strong></div>
 					</div>
