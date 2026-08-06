@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
 	readonly PUBLIC_SITE_URL?: string;
+	readonly PUBLIC_YANDEX_METRIKA_ID?: string;
 	readonly PUBLIC_SANITY_PROJECT_ID?: string;
 	readonly PUBLIC_SANITY_DATASET?: string;
 	readonly SANITY_STUDIO_PROJECT_ID?: string;

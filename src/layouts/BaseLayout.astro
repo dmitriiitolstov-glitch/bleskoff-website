@@ -7,6 +7,7 @@ interface Props {
 	canonical?: string;
 	image?: string;
 	noindex?: boolean;
+	analytics?: boolean;
 	structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -16,12 +17,14 @@ const {
 	canonical,
 	image = "/images/gallery-1.jpg",
 	noindex = false,
+	analytics = true,
 	structuredData,
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://blesk-off.ru");
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site);
 const socialImageUrl = new URL(image, site);
+const yandexMetrikaId = import.meta.env.PUBLIC_YANDEX_METRIKA_ID?.trim() || "105879512";
 ---
 
 <!doctype html>
@@ -49,8 +52,32 @@ const socialImageUrl = new URL(image, site);
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<title>{title}</title>
 		{structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+		{analytics && yandexMetrikaId && (
+			<script is:inline define:vars={{ yandexMetrikaId }}>
+				(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+				m[i].l=1*new Date();
+				for (var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+				k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+				(window,document,"script","https://mc.yandex.ru/metrika/tag.js?id="+yandexMetrikaId,"ym");
+
+				ym(Number(yandexMetrikaId),"init",{
+					ssr:true,
+					webvisor:true,
+					clickmap:true,
+					ecommerce:"dataLayer",
+					referrer:document.referrer,
+					url:location.href,
+					accurateTrackBounce:true,
+					trackLinks:true
+				});
+			</script>
+		)}
 	</head>
 	<body>
+		{analytics && yandexMetrikaId && (
+			<noscript><div><img src={`https://mc.yandex.ru/watch/${yandexMetrikaId}`} style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+		)}
 		<slot />
+		{analytics && <script src="https://cdn.callibri.ru/callibri.js" type="text/javascript" charset="utf-8" defer></script>}
 	</body>
 </html>
