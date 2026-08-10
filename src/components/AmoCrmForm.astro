@@ -9,6 +9,35 @@
 		charset="utf-8"
 		src="https://forms.amocrm.ru/forms/assets/js/amoforms.js?1785148425"
 	></script>
+	<script is:inline>
+		(() => {
+			const formId = 1734006;
+			const metrikaCounterId = 105879512;
+			const metrikaGoalId = "lead_form_success";
+
+			const bindSuccessfulSubmissionGoal = () => {
+				if (window.__bleskoffAmoMetrikaGoalBound) return;
+				if (typeof window.amo_forms_params?.onFormSubmit !== "function") return;
+
+				window.__bleskoffAmoMetrikaGoalBound = true;
+				window.amo_forms_params.onFormSubmit((result) => {
+					if (Number(result?.form_id) !== formId || result?.status !== "success") return;
+
+					if (typeof window.ym === "function") {
+						window.ym(metrikaCounterId, "reachGoal", metrikaGoalId);
+					}
+				}, formId);
+			};
+
+			// amoCRM вызывает этот callback после загрузки формы. Событие цели
+			// отправляется только при ответе amoCRM со статусом success.
+			if (typeof window.amo_forms_loaded === "function") {
+				window.amo_forms_loaded(bindSuccessfulSubmissionGoal);
+			}
+
+			bindSuccessfulSubmissionGoal();
+		})();
+	</script>
 	<noscript>
 		<p class="amo-form-fallback">
 			Для отправки заявки включите JavaScript или позвоните нам по телефону, указанному рядом с формой.
