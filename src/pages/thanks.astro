@@ -7,6 +7,7 @@ import { getCmsContent } from "../lib/cms";
 const cms = await getCmsContent();
 const settings = { ...defaultSettings, ...(cms?.settings ?? {}) };
 const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
+const telegramUrl = settings.telegramUrl || "https://t.me/bleskOFF_DS";
 ---
 
 <BaseLayout
@@ -26,7 +27,7 @@ const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
 					<p>Менеджер BleskOFF изучит заявку, уточнит детали и предложит удобное время для осмотра автомобиля.</p>
 					<div class="thanks-actions">
 						<a class="button" href={`tel:${phoneHref}`}>Позвонить сейчас</a>
-						<a class="button secondary" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">Написать в WhatsApp</a>
+						<a class="button secondary" href={telegramUrl} target="_blank" rel="noreferrer">Написать в Telegram</a>
 						<a class="thanks-home" href="/">Вернуться на главную →</a>
 					</div>
 				</div>

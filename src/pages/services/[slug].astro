@@ -33,8 +33,7 @@ const priceNumber = Number(service.priceFrom.replace(/\D/g, "")) || undefined;
 const beforeImage = service.beforeImage || service.afterImage || service.image;
 const afterImage = service.afterImage || service.beforeImage || service.image;
 const comparisonIsIllustration = !service.beforeImage || !service.afterImage;
-const whatsappMessage = encodeURIComponent(`Здравствуйте! Хочу уточнить стоимость услуги «${service.title}» для моего автомобиля.`);
-const whatsappUrl = `https://wa.me/${settings.whatsapp}?text=${whatsappMessage}`;
+const telegramUrl = settings.telegramUrl || "https://t.me/bleskOFF_DS";
 
 const structuredData = [
 	{
@@ -195,7 +194,7 @@ const structuredData = [
 							<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
 							<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
 						</div>
-						<div class="contact-actions"><a class="button" href={whatsappUrl} target="_blank" rel="noreferrer">Написать в WhatsApp</a><a class="button secondary" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a></div>
+						<div class="contact-actions"><a class="button" href={telegramUrl} target="_blank" rel="noreferrer">Написать в Telegram</a><a class="button secondary" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a></div>
 					</div>
 				</div>
 

@@ -15,6 +15,7 @@ const promotions = cms?.promotions?.length ? cms.promotions : defaultPromotions;
 const programs = cms?.programs?.length ? cms.programs : defaultPrograms;
 const faqs = cms?.faqs?.length ? cms.faqs : defaultFaqs;
 const phoneHref = String(settings.phone).replace(/[^\d+]/g, "");
+const telegramUrl = settings.telegramUrl || "https://t.me/bleskOFF_DS";
 const featuredPromotion = promotions.find((promotion) => promotion.layout === "first" && promotion.validUntil);
 const heroSlides = [
 	{ src: "/images/hero/hero-studio.jpg", alt: "Мастер работает с автомобилем в студии BleskOFF", width: 1800, height: 1350, position: "62% center" },
@@ -264,7 +265,7 @@ const process = [
 						</div>
 						<div class="contact-actions">
 							<a class="button" href={settings.bookingUrl} target="_blank" rel="noreferrer">Онлайн-запись</a>
-							<a class="button secondary" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">Написать в WhatsApp</a>
+							<a class="button secondary" href={telegramUrl} target="_blank" rel="noreferrer">Написать в Telegram</a>
 						</div>
 					</div>
 				</div>

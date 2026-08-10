@@ -77,7 +77,7 @@ export const defaultHomepage = {
 	lead: "Бережно восстанавливаем и защищаем автомобиль. Объясняем каждый этап, фиксируем стоимость и отвечаем за результат.",
 	image: "/images/gallery-1.jpg",
 	primaryCtaLabel: "Рассчитать стоимость",
-	primaryCtaUrl: "https://wa.me/79812602735?text=Здравствуйте!%20Хочу%20рассчитать%20стоимость%20детейлинга",
+	primaryCtaUrl: "https://t.me/bleskOFF_DS",
 };
 
 const defaultServiceProcess = [
