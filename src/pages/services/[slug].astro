@@ -87,6 +87,15 @@ const structuredData = [
 						<div><span>Стоимость</span><strong>{service.priceFrom}</strong></div>
 						<div><span>Срок</span><strong>{service.duration}</strong></div>
 					</div>
+					<a class="service-call callibri_phone" href={`tel:${phoneHref}`} aria-label="Позвонить в BleskOFF">
+						<span class="service-call__icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24"><path d="M7.3 3.5 9.8 8l-2.1 1.8c1.3 2.8 3.6 5.1 6.4 6.4l1.8-2.1 4.5 2.5-.8 3.4c-.2.8-.9 1.3-1.7 1.3C9.5 21.3 2.7 14.5 2.7 6.1c0-.8.5-1.5 1.3-1.7l3.3-.9Z" /></svg>
+						</span>
+						<span class="service-call__copy"><small>Позвонить в студию</small><strong>{settings.phone}</strong></span>
+						<span class="service-call__arrow" aria-hidden="true">
+							<svg viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10" /></svg>
+						</span>
+					</a>
 					<div class="hero-actions">
 						<a class="button" href="#contact-form">Рассчитать стоимость</a>
 						<a class="button secondary" href="#prices">Посмотреть варианты</a>
@@ -190,7 +199,7 @@ const structuredData = [
 					<div class="reveal"><h2>Уточнить<br />стоимость</h2><p class="contacts-intro">Оставьте контакты, укажите услугу и автомобиль — дадим предварительный ориентир и предложим время для осмотра.</p></div>
 					<div class="reveal">
 						<div class="contact-links">
-							<a class="contact-link" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
+							<a class="contact-link callibri_phone" href={`tel:${phoneHref}`}><span>Телефон</span><strong>{settings.phone}</strong><b>↗</b></a>
 							<a class="contact-link" href={settings.mapsUrl} target="_blank" rel="noreferrer"><span>Адрес</span><strong>{settings.address}</strong><b>↗</b></a>
 							<a class="contact-link" href={`mailto:${settings.email}`}><span>Почта</span><strong>{settings.email}</strong><b>↗</b></a>
 						</div>
@@ -210,12 +219,27 @@ const structuredData = [
 	</main>
 
 	<footer class="footer"><div class="container footer-inner"><span>© {new Date().getFullYear()} BleskOFF Detailing Studio</span><span>Санкт-Петербург · {settings.workingHours}</span><a href="https://blesk-off.ru/polit">Политика конфиденциальности</a></div></footer>
-	<a class="mobile-booking" href={settings.bookingUrl} target="_blank" rel="noreferrer">Записаться онлайн</a>
+	<a class="mobile-booking service-mobile-call callibri_phone" href={`tel:${phoneHref}`} aria-label="Позвонить в BleskOFF" aria-hidden="true" tabindex="-1">
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.3 3.5 9.8 8l-2.1 1.8c1.3 2.8 3.6 5.1 6.4 6.4l1.8-2.1 4.5 2.5-.8 3.4c-.2.8-.9 1.3-1.7 1.3C9.5 21.3 2.7 14.5 2.7 6.1c0-.8.5-1.5 1.3-1.7l3.3-.9Z" /></svg>
+		<span>Позвонить</span><strong>{settings.phone}</strong>
+	</a>
 
 	<script>
 		const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
 			if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); }
 		}), { threshold: 0.08, rootMargin: "0px 0px -35px" });
 		document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+
+		const heroCall = document.querySelector<HTMLElement>(".service-call");
+		const mobileCall = document.querySelector<HTMLElement>(".service-mobile-call");
+		if (heroCall && mobileCall) {
+			const callObserver = new IntersectionObserver(([entry]) => {
+				const show = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+				mobileCall.classList.toggle("is-visible", show);
+				mobileCall.setAttribute("aria-hidden", String(!show));
+				mobileCall.tabIndex = show ? 0 : -1;
+			}, { threshold: 0 });
+			callObserver.observe(heroCall);
+		}
 	</script>
 </BaseLayout>

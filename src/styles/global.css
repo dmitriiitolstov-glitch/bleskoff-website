@@ -1459,6 +1459,93 @@ img {
 	line-height: 1;
 }
 
+.service-call {
+	display: grid;
+	grid-template-columns: 54px minmax(0, 1fr) 24px;
+	gap: 16px;
+	align-items: center;
+	max-width: 580px;
+	min-height: 88px;
+	margin-top: 14px;
+	padding: 16px 18px;
+	background: var(--ink);
+	color: var(--white);
+	transition: background 180ms ease, transform 180ms ease;
+}
+
+.service-call:hover,
+.service-call:focus-visible {
+	background: var(--accent);
+	transform: translateY(-2px);
+}
+
+.service-call:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 4px;
+}
+
+.service-call__icon {
+	display: grid;
+	place-items: center;
+	width: 54px;
+	height: 54px;
+	background: var(--accent);
+}
+
+.service-call:hover .service-call__icon,
+.service-call:focus-visible .service-call__icon {
+	background: var(--ink);
+}
+
+.service-call__icon svg,
+.service-call__arrow svg {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: square;
+	stroke-linejoin: miter;
+	stroke-width: 1.7;
+}
+
+.service-call__copy small {
+	display: block;
+	margin-bottom: 3px;
+	color: #c9c4bd;
+	font-size: 10px;
+	font-weight: 800;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+
+.service-call:hover .service-call__copy small,
+.service-call:focus-visible .service-call__copy small {
+	color: var(--white);
+}
+
+.service-call__copy strong {
+	display: block;
+	font-size: clamp(20px, 2vw, 28px);
+	letter-spacing: -0.025em;
+	line-height: 1.1;
+	white-space: nowrap;
+}
+
+.service-call__arrow {
+	display: grid;
+	place-items: center;
+	transition: transform 180ms ease;
+}
+
+.service-call:hover .service-call__arrow,
+.service-call:focus-visible .service-call__arrow {
+	transform: translate(2px, -2px);
+}
+
+.service-hero .hero-actions {
+	margin-top: 14px;
+}
+
 .service-hero__visual {
 	position: relative;
 	min-height: 700px;
@@ -2157,6 +2244,18 @@ img {
 		grid-template-columns: 1fr;
 	}
 
+	.service-call {
+		grid-template-columns: 48px minmax(0, 1fr) 22px;
+		gap: 12px;
+		min-height: 80px;
+		padding: 14px;
+	}
+
+	.service-call__icon {
+		width: 48px;
+		height: 48px;
+	}
+
 	.service-hero__visual {
 		min-height: 440px;
 	}
@@ -2359,5 +2458,35 @@ img {
 		font-weight: 850;
 		letter-spacing: 0.055em;
 		text-transform: uppercase;
+	}
+
+	.service-mobile-call {
+		gap: 10px;
+		background: var(--ink);
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(calc(100% + 24px));
+		transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), visibility 220ms;
+	}
+
+	.service-mobile-call.is-visible {
+		visibility: visible;
+		pointer-events: auto;
+		transform: translateY(0);
+	}
+
+	.service-mobile-call svg {
+		width: 20px;
+		height: 20px;
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+		stroke-width: 1.8;
+	}
+
+	.service-mobile-call strong {
+		font-size: 14px;
+		letter-spacing: 0;
 	}
 }
